@@ -1,0 +1,1 @@
+KEYSTORE_PATH=../react-native/android/app; tns build android --release --key-store-path=$KEYSTORE_PATH/my-key.keystore --key-store-password=password --key-store-alias=my-key-alias --key-store-alias-password=password
