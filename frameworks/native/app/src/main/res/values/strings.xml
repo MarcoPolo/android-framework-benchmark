@@ -1,0 +1,58 @@
+<resources>
+    <string name="app_name">Benchmark</string>
+    <string-array name="adjective">
+        <item>pretty</item>
+        <item>large</item>
+        <item>big</item>
+        <item>small</item>
+        <item>tall</item>
+        <item>short</item>
+        <item>long</item>
+        <item>handsome</item>
+        <item>plain</item>
+        <item>quaint</item>
+        <item>clean</item>
+        <item>elegant</item>
+        <item>easy</item>
+        <item>angry</item>
+        <item>crazy</item>
+        <item>helpful</item>
+        <item>mushy</item>
+        <item>odd</item>
+        <item>unsightly</item>
+        <item>adorable</item>
+        <item>important</item>
+        <item>inexpensive</item>
+        <item>cheap</item>
+        <item>expensive</item>
+        <item>fancy</item>
+    </string-array>
+    <string-array name="color">
+        <item>red</item>
+        <item>yellow</item>
+        <item>blue</item>
+        <item>green</item>
+        <item>pink</item>
+        <item>brown</item>
+        <item>purple</item>
+        <item>brown</item>
+        <item>white</item>
+        <item>black</item>
+        <item>orange</item>
+    </string-array>
+    <string-array name="noun">
+        <item>table</item>
+        <item>chair</item>
+        <item>house</item>
+        <item>bbq</item>
+        <item>desk</item>
+        <item>car</item>
+        <item>pony</item>
+        <item>cookie</item>
+        <item>sandwich</item>
+        <item>burger</item>
+        <item>pizza</item>
+        <item>mouse</item>
+        <item>keyboard</item>
+    </string-array>
+</resources>
