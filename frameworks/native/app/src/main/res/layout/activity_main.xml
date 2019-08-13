@@ -21,35 +21,39 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+            <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Create 1,000 rows"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/header"
+                    android:onClick="run"
+                    tools:ignore="HardcodedText"/>
+            <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Create 10,000 rows"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/header"
+                    android:onClick="runLots"
+                    tools:ignore="HardcodedText"/>
+            <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Append 1,000 rows"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/header"
+                    android:onClick="add"
+                    tools:ignore="HardcodedText"/>
+
+        </LinearLayout>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
         <Button
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="Create 1,000 rows"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="@id/header"
-                android:onClick="run"
-                tools:ignore="HardcodedText"/>
-        <Button
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="Create 10,000 rows"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="@id/header"
-                android:onClick="runLots"
-                tools:ignore="HardcodedText"/>
-        <Button
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="Append 1,000 rows"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="@id/header"
-                android:onClick="add"
-                tools:ignore="HardcodedText"/>
-        <Button
-                android:layout_width="fill_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Update every 10th row"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -58,7 +62,7 @@
                 android:onClick="update"
                 tools:ignore="HardcodedText"/>
         <Button
-                android:layout_width="fill_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Clear"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -67,7 +71,7 @@
                 android:onClick="clear"
                 tools:ignore="HardcodedText"/>
         <Button
-                android:layout_width="fill_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Swap Rows"
                 android:id="@+id/swap"
@@ -76,6 +80,7 @@
                 app:layout_constraintTop_toTopOf="@id/header"
                 android:onClick="swapRows"
                 tools:ignore="HardcodedText"/>
+    </LinearLayout>
         <ScrollView android:layout_width="match_parent" android:layout_height="wrap_content">
             <LinearLayout android:layout_width="match_parent" android:id="@+id/list" android:layout_height="wrap_content"
                           android:orientation="vertical">

@@ -35,12 +35,12 @@ class MainActivity : AppCompatActivity() {
 
     fun run(view: View) {
         appData?.clear()
-        appData?.appendRows(10)
+        appData?.appendRows(1000)
     }
 
     fun runLots(view: View) {
         appData?.clear()
-        appData?.appendRows(1000)
+        appData?.appendRows(10000)
 
     }
     fun add(view: View) {
