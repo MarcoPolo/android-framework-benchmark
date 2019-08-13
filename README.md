@@ -31,9 +31,31 @@ Another facet which is especially important on mobile devices is power and
 memory consumption. A framework is better in this case if it uses minimal
 memory, cpu, and IO.
 
+## Motivation
+
+I couldn't find a satisfying comparison between various frameworks. Even hot ones like React Native and Flutter only have [vague performance comparisons](https://www.google.com/search?q=react+native+vs+flutter+performance). I know each framework has it's own benchmarks as well, but I wanted something a bit more neutral.
+I think this comparison is important because it can give perspective to both
+designers and users of the UI frameworks. If someone comes up with a new UI
+framework that claims to be 10x faster than X, it's really worth backing up
+those claims on a neutral benchmark. If a user wants to pick framework X over
+Y, it's important they be informed about the trade off they're making. For
+example, if I want to make an app cross platform I may choose React Native
+over Native android code because I can make an app for both iOS and Android
+with the same codebase (and maybe even Desktop) On the other hand, if the
+project involves a lot of user data updates and we expect snappy user
+experience it may be worth investing the extra time in making a native
+android app.
+
+## Cross Platform
+
+I hope to extend this with a special focus on cross platform frameworks.
+Maybe even award more points for frameworks that are consistently good across
+devices rather than good on just one platform. That said, it's important to keep in mind that when we write cross platform code we should be measuring ourselves against the best native solution (e.g. Native Android UI code, Litho) instead of other cross platform solutions (e.g. A WebView wrapper around a website).
+
 ## TODO
 
 - Instrument Benchmarking Code
+- Add Flutter
 - Add Litho
 
 ## Criticisms
