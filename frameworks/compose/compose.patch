@@ -1,0 +1,637 @@
+commit 274dbcb2812602753ac7b33e1a37aca71ab5fe4c
+Author: Marco Munizaga <marco@marcopolo.io>
+Date:   Mon Aug 12 23:07:11 2019 -0400
+
+    Add Table Benchmark
+    
+    Change-Id: I1d527da0b334e0b2d6d394fb7674202795adf93a
+
+diff --git a/ui/ui-material/integration-tests/material-studies/src/main/AndroidManifest.xml b/ui/ui-material/integration-tests/material-studies/src/main/AndroidManifest.xml
+index a035b92ddc..a2f2621dd5 100644
+--- a/ui/ui-material/integration-tests/material-studies/src/main/AndroidManifest.xml
++++ b/ui/ui-material/integration-tests/material-studies/src/main/AndroidManifest.xml
+@@ -23,21 +23,33 @@
+         android:supportsRtl="true"
+         android:allowBackup="false" android:icon="@drawable/material_logo">
+ 
+-        <activity android:name=".MainActivity">
++<!--        <activity android:name=".MainActivity">-->
++<!--            <intent-filter>-->
++<!--                <action android:name="android.intent.action.MAIN" />-->
++<!--                <category android:name="android.intent.category.DEFAULT" />-->
++<!--                <category android:name="android.intent.category.LAUNCHER" />-->
++<!--            </intent-filter>-->
++<!--        </activity>-->
++
++
++        <activity android:name=".rally.RallyActivity"
++                  android:theme="@android:style/Theme.NoTitleBar"
++                  android:configChanges="orientation|screenSize"
++                  android:label="Rally">
+             <intent-filter>
+                 <action android:name="android.intent.action.MAIN" />
+-                <category android:name="android.intent.category.DEFAULT" />
+-                <category android:name="android.intent.category.LAUNCHER" />
++                <category android:name="androidx.ui.material.studies.SAMPLE_CODE" />
+             </intent-filter>
+         </activity>
+-
+-        <activity android:name=".rally.RallyActivity"
++        <activity android:name=".table.TableActivity"
+                   android:theme="@android:style/Theme.NoTitleBar"
+                   android:configChanges="orientation|screenSize"
+-                  android:label="Rally">
++                  android:label="Table Benchmark">
+             <intent-filter>
+                 <action android:name="android.intent.action.MAIN" />
+                 <category android:name="androidx.ui.material.studies.SAMPLE_CODE" />
++                <category android:name="android.intent.category.DEFAULT" />
++                <category android:name="android.intent.category.LAUNCHER" />
+             </intent-filter>
+         </activity>
+     </application>
+diff --git a/ui/ui-material/integration-tests/material-studies/src/main/java/androidx/ui/material/studies/table/TableActivity.kt b/ui/ui-material/integration-tests/material-studies/src/main/java/androidx/ui/material/studies/table/TableActivity.kt
+new file mode 100644
+index 0000000000..abb1d788dd
+--- /dev/null
++++ b/ui/ui-material/integration-tests/material-studies/src/main/java/androidx/ui/material/studies/table/TableActivity.kt
+@@ -0,0 +1,185 @@
++/*
++ * Copyright 2019 The Android Open Source Project
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *      http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++package androidx.ui.material.studies.table
++
++import android.app.Activity
++import android.os.Bundle
++import android.provider.ContactsContract
++import android.util.Log
++import android.widget.Scroller
++import androidx.compose.Composable
++import androidx.compose.composer
++import androidx.compose.state
++import androidx.compose.unaryPlus
++import androidx.core.view.ScrollingView
++import androidx.ui.core.Layout
++import androidx.ui.core.Layout
++import androidx.ui.core.Text
++import androidx.ui.core.dp
++import androidx.ui.core.gesture.PressGestureDetector
++import androidx.ui.core.setContent
++import androidx.ui.graphics.Color
++import androidx.ui.layout.Align
++import androidx.ui.layout.Alignment
++import androidx.ui.layout.Center
++import androidx.ui.layout.Column
++import androidx.ui.layout.CrossAxisAlignment
++import androidx.ui.layout.FlexColumn
++import androidx.ui.layout.FlexRow
++import androidx.ui.layout.HeightSpacer
++import androidx.ui.layout.Padding
++import androidx.ui.layout.Row
++import androidx.ui.layout.VerticalScroller
++import androidx.ui.material.Button
++import androidx.ui.material.MaterialTheme
++import androidx.ui.material.studies.Scaffold
++import androidx.ui.material.surface.Surface
++import androidx.ui.material.themeColor
++import androidx.ui.material.themeTextStyle
++import androidx.ui.text.TextStyle
++
++/**
++ * This Activity recreates the Rally Material Study from
++ * https://material.io/design/material-studies/rally.html
++ */
++class TableActivity : Activity() {
++    override fun onCreate(savedInstanceState: Bundle?) {
++        super.onCreate(savedInstanceState)
++        setContent {
++            TableApp()
++        }
++    }
++
++    @Composable
++    fun TableApp() {
++        MaterialTheme {
++            Scaffolding()
++        }
++
++    }
++
++    @Composable
++    fun Scaffolding() {
++        FlexColumn {
++            expanded(flex = 1.0f) {
++                Surface(color = +themeColor { surface }) {
++                    Padding(top = 10.dp) {
++                        //                        BodyScroll()
++                        BodyTable()
++                    }
++                }
++            }
++        }
++    }
++
++    @Composable
++    fun Body() {
++        Column {
++            Align(Alignment.TopCenter) {
++                Text("Top Center")
++            }
++            Align(Alignment.Center) {
++                Text("Center")
++            }
++            Align(Alignment.BottomCenter) {
++                Text("Bottom Center")
++            }
++        }
++    }
++
++
++    @Composable
++    fun BodyTable() {
++        var appData by +state { AppData() }
++        FlexColumn {
++            inflexible {
++                Text("Jetpack")
++                Row {
++                    Button(onClick = {
++                        appData.clear()
++                        appData.appendRows(1000)
++                        appData = appData
++                    }) {
++                        Text("Create 1K Rows")
++                    }
++                    Button(onClick = {
++                        appData.clear()
++                        appData.appendRows(10000)
++                        appData = appData
++                    }) {
++                        Text("Create 10K Rows")
++                    }
++                    Button(onClick = {
++                        appData.appendRows(1000)
++                        appData = appData
++                    }) {
++                        Text("Append 1K Rows")
++                    }
++                }
++                Row {
++                    Button(onClick = {
++                        appData.update()
++                        appData = appData
++                    }) {
++                        Text("Update i%10==0 Rows")
++                    }
++                    Button(onClick = {
++                        appData.clear()
++                        appData = appData
++                    }) {
++                        Text("Clear")
++                    }
++                    Button(onClick = {
++                        appData.swapRows()
++                        appData = appData
++                    }) {
++                        Text("Swap rows")
++                    }
++                    Button(onClick = {
++                        Log.d("Table", "Am I responsive? YES")
++                    }) {
++                        Text("Am I Responsive?")
++                    }
++                }
++            }
++            expanded(flex = 1.0f) {
++
++                VerticalScroller {
++                    Column {
++                        for (datum in appData.rows) {
++                            DataRow(datum)
++                        }
++                    }
++                }
++            }
++        }
++    }
++
++    @Composable
++    fun DataRow(datum: Datum) {
++        Row {
++            Text("${datum.id}")
++            PressGestureDetector(onPress = {
++                Log.d("Table", "You've pressed the label!!")
++            }) {
++                Text(datum.label)
++            }
++            Text("X")
++        }
++
++    }
++}
+\ No newline at end of file
+diff --git a/ui/ui-material/integration-tests/material-studies/src/main/java/androidx/ui/material/studies/table/TableCards.kt b/ui/ui-material/integration-tests/material-studies/src/main/java/androidx/ui/material/studies/table/TableCards.kt
+new file mode 100644
+index 0000000000..5f9a2dda41
+--- /dev/null
++++ b/ui/ui-material/integration-tests/material-studies/src/main/java/androidx/ui/material/studies/table/TableCards.kt
+@@ -0,0 +1,176 @@
++/*
++ * Copyright 2019 The Android Open Source Project
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *      http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++package androidx.ui.material.studies.table
++
++import androidx.compose.Composable
++import androidx.compose.ambient
++import androidx.compose.composer
++import androidx.compose.unaryPlus
++import androidx.ui.core.Text
++import androidx.ui.core.dp
++import androidx.ui.foundation.ColoredRect
++import androidx.ui.graphics.Color
++import androidx.ui.layout.Column
++import androidx.ui.layout.CrossAxisAlignment
++import androidx.ui.layout.EdgeInsets
++import androidx.ui.layout.FixedSpacer
++import androidx.ui.layout.FlexRow
++import androidx.ui.layout.MainAxisAlignment
++import androidx.ui.layout.Padding
++import androidx.ui.layout.Row
++import androidx.ui.layout.WidthSpacer
++import androidx.ui.material.Button
++import androidx.ui.material.Colors
++import androidx.ui.material.Divider
++import androidx.ui.material.TextButtonStyle
++import androidx.ui.material.surface.Card
++import androidx.ui.material.themeTextStyle
++
++// TODO: This is not integrated with the theme
++internal val cardInternalColor = Color(0xFF33333D.toInt())
++
++/**
++ * The Alerts card within the Rally Overview screen.
++ */
++@Composable
++fun RallyAlertCard() {
++    Card(color = cardInternalColor) {
++        Padding(padding = 12.dp) {
++            Column {
++                Row(mainAxisAlignment = MainAxisAlignment.SpaceBetween) {
++                    Text(text = "Alerts", style = +themeTextStyle { subtitle2 })
++                    Button(text = "See All", onClick = { }, style = TextButtonStyle())
++                }
++                Padding(padding = EdgeInsets(0.dp, 12.dp, 0.dp, 12.dp)) {
++                    val colors = +ambient(Colors)
++                    Divider(color = colors.surface, height = 2.dp)
++                }
++                FlexRow {
++                    expanded(flex = 1.0f) {
++                        val text = "Heads up, you've used up 90% of your " +
++                                "Shopping budget for this month."
++                        Text(
++                            style = +themeTextStyle { body1 },
++                            text = text
++                        )
++                    }
++                    inflexible {
++                        // TODO: icons still don't work
++//                        <vectorResource res=context.resources
++//                            resId=androidx.ui.material.studies.R.drawable.sort_icon/>
++                        Button(text = "Sort", onClick = { }, style = TextButtonStyle())
++                    }
++                }
++            }
++        }
++    }
++}
++
++/**
++ * The Accounts card within the Rally Overview screen.
++ */
++@Composable
++fun RallyAccountsCard() {
++    Card(color = cardInternalColor) {
++        Column {
++            Padding(padding = 12.dp) {
++                Column {
++                    Text(text = "Accounts", style = +themeTextStyle { body1 })
++                    Text(text = "$12,132.49", style = +themeTextStyle { h3 })
++                }
++            }
++            Divider(color = rallyGreen, height = 1.dp)
++            Padding(padding = 12.dp) {
++                Column {
++                    val colors = +ambient(Colors)
++                    RallyAccountRow(
++                        name = "Checking",
++                        number = "1234",
++                        amount = "2,215.13",
++                        color = Color(0xFF005D57.toInt())
++                    )
++                    Divider(color = colors.surface, height = 2.dp)
++                    RallyAccountRow(
++                        name = "Home Savings",
++                        number = "5678",
++                        amount = "8,676.88",
++                        color = Color(0xFF04B97F.toInt())
++                    )
++                    Divider(color = colors.surface, height = 2.dp)
++                    RallyAccountRow(
++                        name = "Car Savings",
++                        number = "9012",
++                        amount = "987.48",
++                        color = Color(0xFF37EFBA.toInt())
++                    )
++                    Divider(color = colors.surface, height = 2.dp)
++                    Button(text = "See All", style = TextButtonStyle())
++                }
++            }
++        }
++    }
++}
++
++/**
++ * A row within the Accounts card in the Rally Overview screen.
++ */
++@Composable
++fun RallyAccountRow(name: String, number: String, amount: String, color: Color) {
++    Padding(padding = EdgeInsets(0.dp, 12.dp, 0.dp, 12.dp)) {
++        FlexRow {
++            inflexible {
++                AccountIndicator(color = color)
++                WidthSpacer(width = 8.dp)
++                Column(crossAxisAlignment = CrossAxisAlignment.Start) {
++                    Text(text = name, style = +themeTextStyle { body1 })
++                    Text(text = "•••••$number", style = +themeTextStyle { subtitle1 })
++                }
++            }
++            expanded(flex = 1.0f) {
++                FixedSpacer(width = 0.dp, height = 0.dp)
++            }
++            inflexible {
++                Text(text = "$ $amount", style = +themeTextStyle { h6 })
++            }
++        }
++    }
++}
++
++/**
++ * A vertical colored line that is used in a [RallyAccountRow] to differentiate accounts.
++ */
++@Composable
++fun AccountIndicator(color: Color) {
++    ColoredRect(color = color, width = 4.dp, height = 36.dp)
++}
++
++/**
++ * The Bills card within the Rally Overview screen.
++ */
++@Composable
++fun RallyBillsCard() {
++    Card(color = cardInternalColor) {
++        Column {
++            Padding(padding = 12.dp) {
++                Column {
++                    Text(text = "Bills", style = +themeTextStyle { subtitle2 })
++                    Text(text = "$1,810.00", style = +themeTextStyle { h1 })
++                }
++            }
++        }
++    }
++}
+\ No newline at end of file
+diff --git a/ui/ui-material/integration-tests/material-studies/src/main/java/androidx/ui/material/studies/table/TableTheme.kt b/ui/ui-material/integration-tests/material-studies/src/main/java/androidx/ui/material/studies/table/TableTheme.kt
+new file mode 100644
+index 0000000000..33adfbc002
+--- /dev/null
++++ b/ui/ui-material/integration-tests/material-studies/src/main/java/androidx/ui/material/studies/table/TableTheme.kt
+@@ -0,0 +1,90 @@
++/*
++ * Copyright 2019 The Android Open Source Project
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *      http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++package androidx.ui.material.studies.table
++
++import androidx.compose.Children
++import androidx.compose.Composable
++import androidx.compose.composer
++import androidx.ui.core.sp
++import androidx.ui.text.font.FontWeight
++import androidx.ui.text.font.FontFamily
++import androidx.ui.graphics.Color
++import androidx.ui.material.MaterialColors
++import androidx.ui.material.MaterialTheme
++import androidx.ui.material.MaterialTypography
++import androidx.ui.text.TextStyle
++
++val rallyGreen = Color(0xFF1EB980.toInt())
++val rallyDarkGreen = Color(0xFF045D56.toInt())
++val rallyOrange = Color(0xFFFF6859.toInt())
++val rallyYellow = Color(0xFFFFCF44.toInt())
++val rallyPurple = Color(0xFFB15DFF.toInt())
++val rallyBlue = Color(0xFF72DEFF.toInt())
++
++@Composable
++fun RallyTheme(children: @Composable() () -> Unit) {
++    val colors = MaterialColors(
++        primary = rallyGreen,
++        surface = Color(0xFF26282F.toInt()),
++        onSurface = Color.White
++    )
++    val typography = MaterialTypography(
++        h1 = TextStyle(fontFamily = FontFamily("RobotoCondensed"),
++            fontWeight = FontWeight.w100,
++            fontSize = 96.sp),
++        h2 = TextStyle(fontFamily = FontFamily("RobotoCondensed"),
++            fontWeight = FontWeight.w100,
++            fontSize = 60.sp),
++        h3 = TextStyle(fontFamily = FontFamily("Eczar"),
++            fontWeight = FontWeight.w500,
++            fontSize = 48.sp),
++        h4 = TextStyle(fontFamily = FontFamily("RobotoCondensed"),
++            fontWeight = FontWeight.w700,
++            fontSize = 34.sp),
++        h5 = TextStyle(fontFamily = FontFamily("RobotoCondensed"),
++            fontWeight = FontWeight.w700,
++            fontSize = 24.sp),
++        h6 = TextStyle(fontFamily = FontFamily("RobotoCondensed"),
++            fontWeight = FontWeight.w700,
++            fontSize = 20.sp),
++        subtitle1 = TextStyle(fontFamily = FontFamily("RobotoCondensed"),
++            fontWeight = FontWeight.w700,
++            fontSize = 16.sp),
++        subtitle2 = TextStyle(fontFamily = FontFamily("RobotoCondensed"),
++            fontWeight = FontWeight.w500,
++            fontSize = 14.sp),
++        body1 = TextStyle(fontFamily = FontFamily("Eczar"),
++            fontWeight = FontWeight.w700,
++            fontSize = 16.sp),
++        body2 = TextStyle(fontFamily = FontFamily("RobotoCondensed"),
++            fontWeight = FontWeight.w200,
++            fontSize = 14.sp),
++        button = TextStyle(fontFamily = FontFamily("RobotoCondensed"),
++            fontWeight = FontWeight.w800,
++            fontSize = 14.sp),
++        caption = TextStyle(fontFamily = FontFamily("RobotoCondensed"),
++            fontWeight = FontWeight.w500,
++            fontSize = 12.sp),
++        overline = TextStyle(fontFamily = FontFamily("RobotoCondensed"),
++            fontWeight = FontWeight.w500,
++            fontSize = 10.sp)
++
++    )
++    MaterialTheme(colors = colors, typography = typography) {
++        children()
++    }
++}
+\ No newline at end of file
+diff --git a/ui/ui-material/integration-tests/material-studies/src/main/java/androidx/ui/material/studies/table/Util.kt b/ui/ui-material/integration-tests/material-studies/src/main/java/androidx/ui/material/studies/table/Util.kt
+new file mode 100644
+index 0000000000..0083f6545c
+--- /dev/null
++++ b/ui/ui-material/integration-tests/material-studies/src/main/java/androidx/ui/material/studies/table/Util.kt
+@@ -0,0 +1,107 @@
++/*
++ * Copyright 2019 The Android Open Source Project
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *      http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++package androidx.ui.material.studies.table
++
++import kotlin.math.roundToInt
++
++
++fun randomHelper(max: Int): Int {
++    return (Math.random() * 1000).roundToInt() % max
++}
++
++class Datum(val id: Int, val label: String)
++
++
++class AppData(var rows: ArrayList<Datum> = ArrayList()) {
++    var rowsSoFar = 0
++    var selectedRow = 0
++
++    fun createRow(rowId: Int): Datum {
++        val a = adjectives[randomHelper(adjectives.size)]
++        val c = colors[randomHelper(colors.size)]
++        val n = nouns[randomHelper(nouns.size)]
++        return Datum(rowId, "$a $c $n")
++    }
++
++    fun appendRows(count: Int) {
++        for (i in rows.size until (count + rows.size)) {
++            rows.add(createRow(i))
++        }
++    }
++
++    fun select(idx: Int) {
++        selectedRow = idx
++    }
++
++    fun remove(idx: Int) {
++        rows.removeAt(idx)
++    }
++
++    fun update() {
++        for (i in 0 until rows.size step 10) {
++            var row = rows[i]
++            rows[i] = Datum(row.id, "${row.label} !!!")
++        }
++    }
++
++    fun clear() {
++        rowsSoFar = 0
++        rows = ArrayList()
++    }
++
++    fun swapRows() {
++        if (rows.size > 998) {
++            val row = rows[1]
++            rows[1] = rows[998]
++            rows[998] = row
++        }
++    }
++}
++
++
++val adjectives = arrayOf(
++    "pretty",
++    "large",
++    "big",
++    "small",
++    "tall",
++    "short",
++    "long",
++    "handsome",
++    "plain",
++    "quaint",
++    "clean",
++    "elegant",
++    "easy",
++    "angry",
++    "crazy",
++    "helpful",
++    "mushy",
++    "odd",
++    "unsightly",
++    "adorable",
++    "important",
++    "inexpensive",
++    "cheap",
++    "expensive",
++    "fancy"
++)
++val colors = arrayOf("red", "yellow", "blue", "green", "pink", "brown", "purple", "brown", "white", "black", "orange")
++val nouns = arrayOf(
++    "table", "chair", "house", "bbq", "desk", "car", "pony", "cookie", "sandwich", "burger", "pizza",
++    "mouse", "keyboard"
++)
