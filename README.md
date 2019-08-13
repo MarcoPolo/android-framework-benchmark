@@ -6,7 +6,7 @@ can you avoid people gaming the benchmarks? When is good enough enough?
 
 Let me also say that this is by no means a fair, applicable, or even good benchmark set.
 
-Check out my [list of criticism]() (And feel free to [add your own!](/edit)
+Check out my [list of criticism](./android-framework-benchmark#criticisms) (And feel free to [add your own!](https://github.com/MarcoPolo/android-framework-benchmark/edit/master/README.md))
 
 ## TODO
 
