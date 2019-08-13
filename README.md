@@ -8,6 +8,11 @@ Let me also say that this is by no means a fair, applicable, or even good benchm
 
 Check out my [list of criticism]() (And feel free to [add your own!](/edit)
 
+## TODO
+
+- Instrument Benchmarking Code
+- Add Litho
+
 ## Criticisms
 
 - This is not using Virtual List/Recycler View. \* This is on purpose. Otherwise it would be too easy
